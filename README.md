@@ -8,17 +8,21 @@ what it promotes on its own website — instead of three data dumps.
 Built by [MetriFi](https://metrifi.com), the AI platform for credit union and
 bank websites, marketing, and landing pages.
 
-## What you get
+## How it works
 
-- **Two CLIs** (single static Go binaries, local SQLite mirrors, no accounts):
-  - `ncua-pp-cli` — every federally insured US credit union, queryable by
-    state, asset size, membership, charter age, or website domain.
-  - `google-ads-transparency-pp-cli` — an advertiser's full Google ad census,
-    prospect scoring, and a local web viewer (`serve`).
-- **Two skills** that teach Claude to drive them correctly:
-  - `credit-union-read` — the standard deliverable: one synthesized Read.
-  - `ncua` — raw credit-union lookups and prospect lists.
-- **A `/setup` command** that installs and verifies everything.
+Data lives on the shared **MetriFi Intelligence server**
+(`intelligence.metrifi.com`): a Laravel app whose fetch engine is a pair of Go
+CLIs driving NCUA bulk data and the Google Ads Transparency Center. Your agent
+talks to it over an authenticated API, so:
+
+- everything anyone syncs is instantly visible to the whole team,
+- nobody needs local binaries, SerpApi keys, or Google rate-limit worries,
+- the browser viewer shows every institution, its verdict, its financial
+  signals, each ad's screenshot, and the written Read.
+
+This plugin gives your Claude the two things it needs: the **skill** that
+teaches it the Read methodology, and a **`/setup`** command that connects it
+to the server with your token.
 
 ## Install
 
@@ -30,26 +34,21 @@ In Claude Code:
 /setup
 ```
 
-Or by hand: `scripts/install.sh` installs the binaries; run each CLI's
-`doctor` to verify.
-
-### Optional: SerpApi
-
-Export `SERPAPI_API_KEY` to enable video-ad destination resolution and the
-paid fallback backend used when Google rate-limits direct requests.
-Everything else works without it.
+`/setup` asks for the server URL and your API token (the server operator
+issues one per teammate: `php artisan intelligence:token you@metrifi.com`).
+Then try: **"build the read on gppfcu.com"**.
 
 ## The viewer
 
-`google-ads-transparency-pp-cli serve` opens a read-only local web UI over
-everything you've synced: every advertiser, its qualification verdict, its
-Read, and each ad's screenshot. A hosted, read-only copy of MetriFi's own
-mirror lives at **intelligence.metrifi.com** (URL TBD).
+Open the server URL in a browser and sign in with your @metrifi.com email —
+a magic link, no password. Access is limited to MetriFi email addresses; the
+same gate applies to API tokens.
 
-## Data notes
+## For server operators
 
-- NCUA data is public; the CLI mirrors it locally on first sync.
-- Ad mirrors are built per-machine by `sync <domain>`. Use `export`/`import`
-  to move a mirror between machines.
-- Direct Google requests are free but rate-limited; the CLI has a cooldown
-  guard — never loop past a block. Details are in the skills.
+- `scripts/release.sh vX.Y.Z` cross-compiles the two Go CLIs from the private
+  `cli-library` checkout and attaches binaries to this repo's GitHub release —
+  that's how a server host gets its fetch engine.
+- The server app lives in the (private) `metrifi-intelligence-app` repo:
+  Laravel + the CLI mirrors + a queue worker. Set `INTEL_SYNC_BACKEND=serpapi`
+  and a server-side `SERPAPI_API_KEY` for block-proof syncing at volume.

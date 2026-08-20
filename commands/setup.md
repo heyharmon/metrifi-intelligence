@@ -1,23 +1,29 @@
 ---
-description: Install the MetriFi Intelligence CLIs, verify them, and seed the NCUA mirror
+description: Connect this machine to the MetriFi Intelligence server (URL + API token)
 ---
 
-Set up the MetriFi Intelligence harness on this machine:
+Connect this machine to the shared MetriFi Intelligence server. No binaries,
+no API keys — just the server URL and a personal token.
 
-1. Run `${CLAUDE_PLUGIN_ROOT}/scripts/install.sh` and show the user its output.
-   It installs `ncua-pp-cli` and `google-ads-transparency-pp-cli` into
-   `~/.local/bin/` for this platform.
-2. Verify both binaries with `~/.local/bin/ncua-pp-cli doctor` and
-   `~/.local/bin/google-ads-transparency-pp-cli doctor`. Both must report the
-   API as reachable before continuing.
-3. If the NCUA mirror is empty, run the ncua CLI's sync to seed it (see the
-   ncua skill for the command). This is public NCUA data; it takes a few
-   minutes on first run.
-4. Ask the user whether they have a SerpApi key. If yes, tell them to export
-   `SERPAPI_API_KEY` in their shell profile. If no, note that everything works
-   except video-ad destination resolution and the `--backend serpapi`
-   fallback used when Google IP-blocks direct requests.
-5. Finish by pointing them at the two skills this plugin installed:
-   `credit-union-read` (the standard deliverable — one synthesized Read) and
-   `ncua` (raw credit-union lookups). Suggest a first run:
-   "build the read on <some credit union domain>".
+1. Ask the user for two things:
+   - The server URL (default `https://intelligence.metrifi.com` — accept it
+     unless they run a local/dev server).
+   - Their API token. If they don't have one, tell them to ask the server
+     operator to run `php artisan intelligence:token <their @metrifi.com email>`
+     and send them the result.
+2. Write both to `~/.config/metrifi-intelligence/env` (create the directory,
+   `chmod 600` the file):
+   ```
+   METRIFI_INTEL_URL='<url, no trailing slash>'
+   METRIFI_INTEL_TOKEN='<token>'
+   ```
+   Quote both values — tokens contain a `|`, which an unquoted shell source
+   would treat as a pipe.
+3. Verify: `source` the file and call `GET $METRIFI_INTEL_URL/api/domains`
+   with `Authorization: Bearer $METRIFI_INTEL_TOKEN`. A 200 with a `domains`
+   array means they're in; show them how many institutions the team has
+   already synced. On 401, the token is wrong — don't store it as working.
+4. Finish by pointing at the `credit-union-read` skill and suggesting a first
+   run: "build the read on <some credit union domain>". Mention the shared
+   viewer lives at the server URL in a browser (magic-link sign-in with their
+   @metrifi.com email).
