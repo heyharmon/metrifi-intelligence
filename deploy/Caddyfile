@@ -1,0 +1,6 @@
+# Reverse proxy for the hosted Intelligence viewer. Caddy terminates TLS
+# automatically; the viewer itself stays on loopback so nothing reaches it
+# except through here.
+intelligence.metrifi.com {
+	reverse_proxy 127.0.0.1:8787
+}

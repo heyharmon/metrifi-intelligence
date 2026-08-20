@@ -1,0 +1,11 @@
+{
+  "name": "metrifi-intelligence",
+  "owner": { "name": "Ryan Harmon" },
+  "plugins": [
+    {
+      "name": "metrifi-intelligence",
+      "source": "./",
+      "description": "Credit union and bank intelligence: NCUA financials + Google ads + website promotions, synthesized into one Read."
+    }
+  ]
+}

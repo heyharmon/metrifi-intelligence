@@ -1,0 +1,6 @@
+{
+  "name": "metrifi-intelligence",
+  "version": "0.1.0",
+  "description": "The intelligence layer for credit unions and community banks: NCUA call-report financials, Google ad activity, and website promotions, synthesized into one Read per institution. Bundles the two CLIs, the skills that drive them, and a /setup command.",
+  "author": { "name": "Ryan Harmon" }
+}
