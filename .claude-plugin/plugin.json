@@ -1,7 +1,7 @@
 {
   "name": "metrifi-intelligence",
-  "version": "0.2.0",
-  "description": "The intelligence layer for credit unions and community banks: NCUA call-report financials, Google ad activity, and website promotions, synthesized into one Read per institution. Drives the shared MetriFi Intelligence server via API token \u2014 no local binaries or keys needed.",
+  "version": "0.3.0",
+  "description": "Builds the Read on any credit union or community bank — NCUA financials, Google ad activity, and website promotions in one synthesis — through MetriFi's shared intelligence server.",
   "author": {
     "name": "Ryan Harmon"
   }

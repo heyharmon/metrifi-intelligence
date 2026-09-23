@@ -1,5 +1,6 @@
 {
   "name": "metrifi-intelligence",
+  "description": "MetriFi's internal marketplace: the Intelligence plugin for credit union and community bank research.",
   "owner": {
     "name": "Ryan Harmon"
   },
@@ -7,7 +8,7 @@
     {
       "name": "metrifi-intelligence",
       "source": "./",
-      "description": "Credit union & bank intelligence: agents sync and read institutions through the shared MetriFi Intelligence server; one synthesized Read per institution."
+      "description": "Builds the Read on any credit union or community bank — NCUA financials, Google ad activity, and website promotions in one synthesis — through MetriFi's shared intelligence server."
     }
   ]
 }
