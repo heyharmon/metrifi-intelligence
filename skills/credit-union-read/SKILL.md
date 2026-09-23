@@ -20,8 +20,8 @@ All data lives on the shared MetriFi Intelligence server. You never run
 Google, SerpApi, or NCUA calls yourself — you ask the server, and everything
 you sync becomes visible to the whole team instantly.
 
-Credentials come from `~/.config/metrifi-intelligence/env` (created by
-`/setup`). Every call looks like:
+Credentials come from `~/.config/metrifi-intelligence/env`, holding
+`METRIFI_INTEL_URL` and `METRIFI_INTEL_TOKEN`. Every call looks like:
 
 ```bash
 source ~/.config/metrifi-intelligence/env
@@ -29,17 +29,25 @@ curl -s -H "Authorization: Bearer $METRIFI_INTEL_TOKEN" -H "Accept: application/
   "$METRIFI_INTEL_URL/api/..."
 ```
 
-If the file is missing or a call returns 401, stop and tell the user to run
-`/setup` (or get a token from whoever operates the server). Endpoints:
+If the file is missing or a call returns 401, stop. Tell the user to sign in at
+the server (`https://intelligence.metrifi.com`), open its **Install** page, and
+paste the one command it gives them — that writes the credentials and installs
+this plugin. If they'd rather not use the page, `/setup` does the same job by
+hand. Endpoints:
 
 | Endpoint | What it does |
 |---|---|
-| `GET  /api/domains` | every domain the team has synced |
-| `POST /api/sync` `{"domain": "..."}` | queue a server-side census sync + screenshot read + NCUA link |
-| `GET  /api/read/<domain>` | the whole picture: profile, financials, signals, promoted products, written Read |
-| `POST /api/read/<domain>` | record the written half of the Read (fields merge, never replace) |
+| `GET  /api/domains` | `{"domains": [...]}` — every domain the team has synced |
+| `POST /api/sync` `{"domain": "..."}` | queues a server-side census sync + landing read + NCUA link; returns `202` with `{"queued": "<domain>"}`. Poll `GET /api/read/<domain>` |
+| `GET  /api/read/<domain>` | the whole picture: `domain`, `synced_at`, `profile` (ad posture), `ncua` (financials, `null` until linked), `signals`, `promoted`, `read` (the written half). `404` if never synced |
+| `POST /api/read/<domain>` | record the written half — any of `priority`, `promoting`, `avoid`, `angle`, `note` (fields merge, never replace) |
 | `POST /api/link/<domain>` `{"charter": "..."}` | tie a domain to its NCUA charter (charter optional = auto-match) |
 | `GET  /api/whois/<domain>` | domain → NCUA institution, without syncing anything |
+
+`POST /api/read`, `POST /api/link`, and `GET /api/whois` are the server driving
+its Go CLIs synchronously, so they answer with that CLI's result envelope: an
+`ok` flag on `200`, or `422` when the CLI itself failed. Check `ok` rather than
+assuming a `200` means it worked.
 
 ## Leg 1 — NCUA financials
 
@@ -69,7 +77,7 @@ repeating it into a deck.
 ## Leg 2 — Google ads
 
 ```bash
-# queue the sync (server does census + screenshot OCR + auto-link)
+# queue the sync (server runs census -> landing read -> auto-link, in that order)
 curl -s -X POST -H "Authorization: Bearer $METRIFI_INTEL_TOKEN" -H "Accept: application/json" \
   -H "Content-Type: application/json" -d '{"domain":"<domain>"}' "$METRIFI_INTEL_URL/api/sync"
 # then poll until synced_at is fresh — syncs take a minute or two
