@@ -1,8 +1,8 @@
 # MetriFi Intelligence
 
 The intelligence layer for credit unions and community banks. Ask Claude to
-"build the read on `<domain>`" and get one synthesized picture of an
-institution — its NCUA call-report financials, its Google ad activity, and what
+"investigate Mountain America Credit Union" (a name or a website both work) and
+get one synthesized picture of an institution — its NCUA call-report financials, its Google ad activity, and what
 it promotes on its own website — instead of three data dumps.
 
 Built by [MetriFi](https://metrifi.com), the AI platform for credit union and
@@ -12,16 +12,20 @@ Requires [Claude Code](https://claude.com/claude-code).
 
 ## Install
 
-1. Sign in at **https://intelligence.metrifi.com** with your @metrifi.com email
-   (magic link, no password).
-2. Open **Install** and copy the one command on that page.
-3. Paste it into a terminal and press return. That's the whole install.
-4. Open Claude Code and say: **"build the read on gppfcu.com"**.
+Paste this into Claude Code:
+
+> Read the agent instructions here to get set up with the MetriFi Intelligence app: https://intelligence.metrifi.com/onboarding
+
+Your agent does the rest. It will send you to
+**https://intelligence.metrifi.com/install** to sign in with your @metrifi.com
+email (magic link, no password) and generate a setup message to paste back. Then
+it saves your credentials, installs this plugin, and asks you to restart Claude
+Code. After that, say **"investigate Mountain America Credit Union"**.
 
 <details>
 <summary>Manual install</summary>
 
-If you can't reach the Install page, run these two commands, then connect:
+To install by hand, run these two commands in a terminal, then connect:
 
 ```
 claude plugin marketplace add heyharmon/metrifi-intelligence

@@ -1,7 +1,7 @@
 ---
 name: credit-union-read
-description: "Produce the Read on a credit union — one synthesized picture of what the institution cares about right now, built from NCUA call-report financials, their Google ad activity, and what they promote on their own website. Use for any credit union or community bank lookup: 'sync and score this credit union', 'what are they promoting', 'what's most important to them right now', 'where are they advertising', 'look up this CU', 'build the read on <domain>'. Always produces a synthesis, never three separate data dumps."
-allowed-tools: "Bash WebFetch Read"
+description: "Produce the Read on a credit union — one synthesized picture of what the institution cares about right now, built from NCUA call-report financials, their Google ad activity, and what they promote on their own website. Use for any credit union or community bank lookup: 'sync and score this credit union', 'what are they promoting', 'what's most important to them right now', 'where are they advertising', 'look up this CU', 'investigate <institution or domain>', 'get <institution>'. Works from an institution name or a website. Always produces a synthesis, never three separate data dumps."
+allowed-tools: "Bash WebFetch WebSearch Read"
 ---
 
 # The Credit Union Read
@@ -30,10 +30,10 @@ curl -s -H "Authorization: Bearer $METRIFI_INTEL_TOKEN" -H "Accept: application/
 ```
 
 If the file is missing or a call returns 401, stop. Tell the user to sign in at
-the server (`https://intelligence.metrifi.com`), open its **Install** page, and
-paste the one command it gives them — that writes the credentials and installs
-this plugin. If they'd rather not use the page, `/setup` does the same job by
-hand. Endpoints:
+`https://intelligence.metrifi.com/install`, click **Generate my setup message**,
+and paste that message back into this chat; it carries their token and points
+at the setup instructions. `/setup` checks and repairs the connection.
+Endpoints:
 
 | Endpoint | What it does |
 |---|---|
@@ -48,6 +48,16 @@ hand. Endpoints:
 its Go CLIs synchronously, so they answer with that CLI's result envelope: an
 `ok` flag on `200`, or `422` when the CLI itself failed. Check `ok` rather than
 assuming a `200` means it worked.
+
+## Starting from a name
+
+Every endpoint takes a domain, but people usually name the institution
+("investigate Mountain America Credit Union"). Find its official website
+first: search the web, prefer the institution's own site over directories, and
+take the bare domain (`macu.com`). Confirm with `GET /api/whois/<domain>`, which
+should name the same institution. If the name fits more than one institution
+(common for "Community", "First", "Heritage" and the like), ask which one
+before syncing anything.
 
 ## Leg 1 — NCUA financials
 
