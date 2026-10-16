@@ -3,8 +3,8 @@ description: Check this machine's connection to the MetriFi Intelligence server,
 ---
 
 This is the check-and-repair path. Most people never need it: the normal way to
-connect is to sign in at https://intelligence.metrifi.com, open **Install**, and
-paste the one command it gives you.
+connect is to sign in at https://intelligence.metrifi.com/install, click
+**Generate my setup message**, and paste that message into Claude Code.
 
 ## 1. Check what's already there
 
@@ -18,7 +18,7 @@ ls -l ~/.config/metrifi-intelligence/env 2>/dev/null && \
 
 - **200** — they're connected. Say so, name the server URL, and report how many
   institutions the team has synced (count the `domains` array in the response).
-  Suggest a first run — "build the read on gppfcu.com" — and **stop here**. Do
+  Suggest a first run — "investigate Mountain America Credit Union" — and **stop here**. Do
   not re-prompt for credentials that already work.
 - **File missing, or 401/403** — go to step 2.
 - **Connection refused / timeout** — the URL is wrong or the server is down.
@@ -28,9 +28,9 @@ ls -l ~/.config/metrifi-intelligence/env 2>/dev/null && \
 
 Tell them the easiest fix, in one line:
 
-> Sign in at https://intelligence.metrifi.com with your @metrifi.com email
-> (magic link, no password), open **Install**, and copy the one command on that
-> page into a terminal. It writes your credentials and installs the plugin.
+> Sign in at https://intelligence.metrifi.com/install with your @metrifi.com
+> email (magic link, no password), click **Generate my setup message**, and
+> paste it here. I'll save your credentials from it.
 
 That page is always right and always current. Offer it before anything else,
 including when the token is expired or was revoked.
@@ -56,6 +56,6 @@ METRIFI_INTEL_TOKEN='<token>'
 `source` would read as a pipe.
 
 Then re-run the check in step 1. A 200 means done — point at the
-`credit-union-read` skill, suggest "build the read on gppfcu.com", and mention
+`credit-union-read` skill, suggest "investigate Mountain America Credit Union", and mention
 the shared viewer lives at the same URL in a browser. On 401, the token is
 wrong: say so and don't treat it as working.
